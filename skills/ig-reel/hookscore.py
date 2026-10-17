@@ -172,7 +172,10 @@ def check_frontload(text):
     penalty = 0
     hit_opener = None
     for weak in WEAK_OPENERS:
-        if opener.startswith(weak) or low[0] == weak:
+        # Whole words only. A bare prefix let "yo" catch "you" and "your", and
+        # "so" catch "some". A trailing apostrophe still counts, so "today's"
+        # and "let's" are caught as before.
+        if re.match(re.escape(weak) + r"(?=$|[\s'’])", opener):
             penalty, hit_opener = 30, weak
             break
     payload = None
